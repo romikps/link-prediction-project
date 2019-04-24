@@ -18,10 +18,16 @@ hepph_graph.add_nodes_from(unique_nodes)
 hepph_graph.add_edges_from(tuple_edge_list)
 
 # Draw graph.
-nx.draw(hepph_graph)
-plt.savefig(f"graph_{int(time.time())}.png")
-plt.show()
+# --Separately--
+pos = nx.spring_layout(hepph_graph)
+#nx.draw_networkx_nodes(hepph_graph, pos, node_size=10, node_color='B')
+#nx.draw_networkx_edges(hepph_graph, pos, alpha=0.5)
 
+# --Together--
+# nx.draw(hepph_graph)
+
+#plt.savefig(f"graph_{int(time.time())}.png")
+plt.show()
 
 # nx.draw_graphviz(hepph_graph)
 # nx.write_dot(hepph_graph, f"graph_{int(time.time())}.dot")
