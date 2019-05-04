@@ -2,10 +2,16 @@ import networkx as nx
 import numpy
 from import_data import train_edges, test_edges, unique_nodes as nodes
 
+def draw_graph(G):
+    nx.draw(G)
+    #plt.savefig(f"graph_{int(time.time())}.png")
+    plt.show()
+
 # G = nx.gnp_random_graph(5, 0.5)
 G = nx.Graph()
 G.add_nodes_from(nodes)
 G.add_edges_from(train_edges)
+draw_graph(G)
 
 A = nx.adj_matrix(G)
 A = A.todense()
