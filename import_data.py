@@ -8,8 +8,8 @@ import time
 # https://snap.stanford.edu/data/ca-HepPh.html
 hepph_data = pd.read_csv("CA-HepPh.txt", sep='\t', header=3)
 
-num_nodes_used = 50 #hepph_data.shape[0]
-tuple_edge_list = list(hepph_data.itertuples(index=False, name=None))[:num_nodes_used]
+num_edges_used = 50 #hepph_data.shape[0]
+tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))[:num_edges_used]
 unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
 
 # Create graph.
@@ -32,7 +32,11 @@ hepph_graph.add_edges_from(tuple_edge_list)
 # https://snap.stanford.edu/data/ca-AstroPh.html
 # https://snap.stanford.edu/data/ca-CondMat.html
   
-train_part = 0.7
-break_point = int(num_nodes_used * train_part)
-train_edges = tuple_edge_list[:break_point]   
-test_edges =  tuple_edge_list[break_point:]
+test_part = 0.3
+n_test_edges = int(num_edges_used * test_part)
+
+test_indices = np.random.choice(num_edges_used, n_test_edges, replace=False)
+train_indices = np.setdiff1d(np.arange(num_edges_used), test_indices)
+
+train_edges = tuple_edge_list[train_indices]   
+test_edges =  tuple_edge_list[test_indices]
