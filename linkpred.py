@@ -23,6 +23,17 @@ def sort_by_coef(preds):
 def get_over_threshold(preds, threshold=0):
     return preds[preds[:, 2] > threshold]
     
+def get_accuracy(pred_edges, true_edges):
+    n_edges = true_edges.shape[0]
+    tp, fp, tn, fn = 0, 0, 0, 0
+    for pred_edge in pred_edges:
+        if np.isin(pred_edge, true_edges):
+            tp += 1
+        else:
+            fp += 1
+    fn = n_edges - tp
+    return float(tp) / n_edges
+    
 
 n_nodes = 15     
 #G = erdos_renyi_graph(n_nodes, 0.25)
@@ -45,6 +56,9 @@ complement_edges = get_complement_edges(G_train)
 preds_jac = nx.jaccard_coefficient(G_train, complement_edges)
 preds_jac = np.array([(u, v, p) for (u, v, p) in preds_jac])
 preds_jac_sorted = sort_by_coef(preds_jac)
+
+pred_edges_jac = get_over_threshold(preds_jac_sorted)[:, 0: 2]
+acc_jac = get_accuracy(pred_edges_jac, test_edges)
 
 # adamic_adar_index
 preds_adam = nx.adamic_adar_index(G_train, complement_edges)
