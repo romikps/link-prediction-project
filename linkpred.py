@@ -23,22 +23,22 @@ def sort_by_coef(preds):
 def get_over_threshold(preds, threshold=0):
     return [pred for pred in preds if pred[2] > threshold]
     
-def get_accuracy(pred_edges, true_edges):
-    n_edges = len(true_edges)
+def get_accuracy(pred_edges, true_edges, all_edges):
     tp, fp, tn, fn = 0, 0, 0, 0
     for pred_edge in pred_edges:
         if pred_edge in true_edges:
             tp += 1
         else:
             fp += 1
-    fn = n_edges - tp
-    return float(tp) / n_edges
+    fn = len(true_edges) - tp
+    tn = len(all_edges) - len(true_edges) - fp
+    return  float(tp + tn) / len(all_edges)
 
 def get_edges_over_threshold(preds, threshold=0):
     return [(u, v) for u, v, p in get_over_threshold(preds, threshold)]
     
 
-n_nodes = 15     
+n_nodes = 1000     
 #G = erdos_renyi_graph(n_nodes, 0.25)
 # small world graph
 G = nx.watts_strogatz_graph(n_nodes, k=4, p=0.1, seed=7)
@@ -60,21 +60,21 @@ preds_jac = [pred for pred in nx.jaccard_coefficient(G_train, complement_edges)]
 preds_jac_sorted = sort_by_coef(preds_jac)
 
 pred_edges_jac = get_edges_over_threshold(preds_jac)
-acc_jac = get_accuracy(pred_edges_jac, test_edges)
+acc_jac = get_accuracy(pred_edges_jac, test_edges, complement_edges)
 
 # adamic_adar_index
 preds_adam = [pred for pred in nx.adamic_adar_index(G_train, complement_edges)]
 preds_adam_sorted = sort_by_coef(preds_adam)
 
 pred_edges_adam = get_edges_over_threshold(preds_adam)
-acc_adam = get_accuracy(pred_edges_adam, test_edges)
+acc_adam = get_accuracy(pred_edges_adam, test_edges, complement_edges)
 
 # preferential_attachment
 preds_pref = [pred for pred in nx.preferential_attachment(G_train, complement_edges)]
 preds_pref_sorted = sort_by_coef(preds_pref)
 
-pred_edges_pref = get_edges_over_threshold(preds_pref, 4)
-acc_pref = get_accuracy(pred_edges_pref, test_edges)
+pred_edges_pref = get_edges_over_threshold(preds_pref, 15)
+acc_pref = get_accuracy(pred_edges_pref, test_edges, complement_edges)
 
 # within_inter_cluster
 # nodes attribute name containing the community information
