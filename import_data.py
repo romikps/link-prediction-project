@@ -13,9 +13,9 @@ tuple_edge_list = list(hepph_data.itertuples(index=False, name=None))[:num_nodes
 unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
 
 # Create graph.
-# hepph_graph = nx.Graph()
-# hepph_graph.add_nodes_from(unique_nodes)
-# hepph_graph.add_edges_from(tuple_edge_list)
+hepph_graph = nx.Graph()
+hepph_graph.add_nodes_from(unique_nodes)
+hepph_graph.add_edges_from(tuple_edge_list)
 
 # Draw graph.
 # --Separately--
