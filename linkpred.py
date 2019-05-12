@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 # from import_data import train_edges, test_edges, unique_nodes as nodes
 # from randwalk import draw_graph
 
@@ -53,28 +54,33 @@ nx.draw_circular(G_train, with_labels=True)
 plt.show()
 # nx.draw_spectral(G_train, with_labels=True)
 
-complement_edges = get_complement_edges(G_train)
+complement_edges = get_complement_edges(G)
+all_test_edges = test_edges + random.sample(complement_edges, k=len(test_edges))
+
+#complement_edges = get_complement_edges(G)
+#neg_edges = np.random.choice(complement_edges, size=len(test_edges), replace=False)
+
 
 # jaccard_coefficient
-preds_jac = [pred for pred in nx.jaccard_coefficient(G_train, complement_edges)]
+preds_jac = [pred for pred in nx.jaccard_coefficient(G_train, all_test_edges)]
 preds_jac_sorted = sort_by_coef(preds_jac)
 
 pred_edges_jac = get_edges_over_threshold(preds_jac)
-acc_jac = get_accuracy(pred_edges_jac, test_edges, complement_edges)
+acc_jac = get_accuracy(pred_edges_jac, test_edges, all_test_edges)
 
 # adamic_adar_index
-preds_adam = [pred for pred in nx.adamic_adar_index(G_train, complement_edges)]
+preds_adam = [pred for pred in nx.adamic_adar_index(G_train, all_test_edges)]
 preds_adam_sorted = sort_by_coef(preds_adam)
 
 pred_edges_adam = get_edges_over_threshold(preds_adam)
-acc_adam = get_accuracy(pred_edges_adam, test_edges, complement_edges)
+acc_adam = get_accuracy(pred_edges_adam, test_edges, all_test_edges)
 
 # preferential_attachment
-preds_pref = [pred for pred in nx.preferential_attachment(G_train, complement_edges)]
+preds_pref = [pred for pred in nx.preferential_attachment(G_train, all_test_edges)]
 preds_pref_sorted = sort_by_coef(preds_pref)
 
 pred_edges_pref = get_edges_over_threshold(preds_pref, 15)
-acc_pref = get_accuracy(pred_edges_pref, test_edges, complement_edges)
+acc_pref = get_accuracy(pred_edges_pref, test_edges, all_test_edges)
 
 # within_inter_cluster
 # nodes attribute name containing the community information
