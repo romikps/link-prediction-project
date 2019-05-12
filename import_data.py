@@ -8,7 +8,7 @@ import time
 # https://snap.stanford.edu/data/ca-HepPh.html
 hepph_data = pd.read_csv("CA-HepPh.txt", sep='\t', header=3)
 
-num_edges_used = 50 #hepph_data.shape[0]
+num_edges_used = 5000 #hepph_data.shape[0]
 tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))[:num_edges_used]
 unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
 
