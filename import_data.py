@@ -32,11 +32,11 @@ hepph_graph.add_edges_from(tuple_edge_list)
 # https://snap.stanford.edu/data/ca-AstroPh.html
 # https://snap.stanford.edu/data/ca-CondMat.html
   
-test_part = 0.3
-n_test_edges = int(num_edges_used * test_part)
+#test_part = 0.3
+#n_test_edges = int(num_edges_used * test_part)
 
-test_indices = np.random.choice(num_edges_used, n_test_edges, replace=False)
-train_indices = np.setdiff1d(np.arange(num_edges_used), test_indices)
+#test_indices = np.random.choice(num_edges_used, n_test_edges, replace=False)
+#train_indices = np.setdiff1d(np.arange(num_edges_used), test_indices)
 
-train_edges = tuple_edge_list[train_indices]   
-test_edges =  tuple_edge_list[test_indices]
+#train_edges = tuple_edge_list[train_indices]   
+#test_edges =  tuple_edge_list[test_indices]

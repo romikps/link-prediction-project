@@ -2,8 +2,8 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-# from import_data import train_edges, test_edges, unique_nodes as nodes
 # from randwalk import draw_graph
+from import_data import hepph_graph
 
 def get_train_test(edge_list, test_part=0.3):
     n_edges = len(edge_list)
@@ -15,9 +15,20 @@ def get_train_test(edge_list, test_part=0.3):
     return ([edge_list[edge_index] for edge_index in train_indices],
            [edge_list[edge_index] for edge_index in test_indices]) 
 
-def get_complement_edges(graph):
-    return [e for e in nx.complement(graph).edges]  
-
+def get_complement_edges(graph, num):
+    # return [e for e in nx.complement(graph).edges]
+    comp_edges = []
+    from_nodes = random.sample(graph.nodes, k=2*num)
+    to_nodes = random.sample(graph.nodes, k=2*num)
+    for from_node, to_node in zip(from_nodes, to_nodes):
+        if len(comp_edges) > num:
+            break
+        
+        if to_node in graph[from_node]:
+            continue
+        comp_edges.append((from_node, to_node))
+    return comp_edges
+            
 def sort_by_coef(preds):
     return sorted(preds, reverse=True, key=lambda elem: elem[2])
 
@@ -39,23 +50,27 @@ def get_edges_over_threshold(preds, threshold=0):
     return [(u, v) for u, v, p in get_over_threshold(preds, threshold)]
     
 
-n_nodes = 1000     
+#n_nodes = 1000     
 #G = erdos_renyi_graph(n_nodes, 0.25)
 # small world graph
-G = nx.watts_strogatz_graph(n_nodes, k=4, p=0.1, seed=7)
-nx.draw_circular(G, with_labels=True)
-plt.show()
-
+#G = nx.watts_strogatz_graph(n_nodes, k=4, p=0.1, seed=7)
+#nx.draw_circular(G, with_labels=True)
+#plt.show()
+    
+G = hepph_graph
 train_edges, test_edges = get_train_test([e for e in G.edges])
 G_train = nx.Graph()
 G_train.add_nodes_from(G.nodes)
 G_train.add_edges_from(train_edges)
-nx.draw_circular(G_train, with_labels=True)
-plt.show()
+# nx.draw_circular(G_train, with_labels=True)
+# plt.show()
 # nx.draw_spectral(G_train, with_labels=True)
 
-complement_edges = get_complement_edges(G)
-all_test_edges = test_edges + random.sample(complement_edges, k=len(test_edges))
+#complement_edges = get_complement_edges(G)
+#all_test_edges = test_edges + random.sample(complement_edges, k=len(test_edges))
+complement_edges = get_complement_edges(G, len(test_edges))
+all_test_edges = test_edges + complement_edges
+print("all test edges ready!")
 
 #complement_edges = get_complement_edges(G)
 #neg_edges = np.random.choice(complement_edges, size=len(test_edges), replace=False)
@@ -67,6 +82,7 @@ preds_jac_sorted = sort_by_coef(preds_jac)
 
 pred_edges_jac = get_edges_over_threshold(preds_jac)
 acc_jac = get_accuracy(pred_edges_jac, test_edges, all_test_edges)
+print("jaccard accuracy:", acc_jac)
 
 # adamic_adar_index
 preds_adam = [pred for pred in nx.adamic_adar_index(G_train, all_test_edges)]
@@ -74,6 +90,7 @@ preds_adam_sorted = sort_by_coef(preds_adam)
 
 pred_edges_adam = get_edges_over_threshold(preds_adam)
 acc_adam = get_accuracy(pred_edges_adam, test_edges, all_test_edges)
+print("adamic adar accuracy:", acc_adam)
 
 # preferential_attachment
 preds_pref = [pred for pred in nx.preferential_attachment(G_train, all_test_edges)]
@@ -81,6 +98,7 @@ preds_pref_sorted = sort_by_coef(preds_pref)
 
 pred_edges_pref = get_edges_over_threshold(preds_pref, 15)
 acc_pref = get_accuracy(pred_edges_pref, test_edges, all_test_edges)
+print("preferential attachment accuracy:", acc_pref)
 
 # within_inter_cluster
 # nodes attribute name containing the community information
