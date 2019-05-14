@@ -18,8 +18,9 @@ def get_train_test(edge_list, test_part=0.3):
 def get_complement_edges(graph, num):
     # return [e for e in nx.complement(graph).edges]
     comp_edges = []
-    from_nodes = random.sample(graph.nodes, k=2*num)
-    to_nodes = random.sample(graph.nodes, k=2*num)
+    nodes = [node for node in graph.nodes]
+    from_nodes = random.choices(nodes, k=2*num)
+    to_nodes = random.choices(nodes, k=2*num)
     for from_node, to_node in zip(from_nodes, to_nodes):
         if len(comp_edges) > num:
             break
@@ -27,6 +28,9 @@ def get_complement_edges(graph, num):
         if to_node in graph[from_node]:
             continue
         comp_edges.append((from_node, to_node))
+    if len(comp_edges) < num: 
+        raise Exception("Insufficient length of complement edges!",
+                        f"{len(comp_edges)} != {num}")
     return comp_edges
             
 def sort_by_coef(preds):
@@ -96,7 +100,9 @@ print("adamic adar accuracy:", acc_adam)
 preds_pref = [pred for pred in nx.preferential_attachment(G_train, all_test_edges)]
 preds_pref_sorted = sort_by_coef(preds_pref)
 
-pred_edges_pref = get_edges_over_threshold(preds_pref, 15)
+pred_edge_num = len(test_edges)
+pred_edges_pref = [(u, v) for u, v, p in preds_pref_sorted[:pred_edge_num]]
+# pred_edges_pref = get_edges_over_threshold(preds_pref, 1000)
 acc_pref = get_accuracy(pred_edges_pref, test_edges, all_test_edges)
 print("preferential attachment accuracy:", acc_pref)
 
