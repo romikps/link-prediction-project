@@ -106,6 +106,11 @@ pred_edges_pref = [(u, v) for u, v, p in preds_pref_sorted[:pred_edge_num]]
 acc_pref = get_accuracy(pred_edges_pref, test_edges, all_test_edges)
 print("preferential attachment accuracy:", acc_pref)
 
+# random
+pred_edges_rand = random.sample(all_test_edges, k=len(test_edges))
+acc_rand = get_accuracy(pred_edges_rand, test_edges, all_test_edges)
+print("random attachment accuracy:", acc_rand)
+
 # within_inter_cluster
 # nodes attribute name containing the community information
 # G[u][community] identifies which community u belongs to. 
