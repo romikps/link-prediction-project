@@ -110,7 +110,6 @@ def goal_function_single_node(w, *args):
     pd = args[4]
     loss_func = args[5]
     adjacency_matrix = args[6]
-    layer_transitions = args[7]
     edge_strengths, edge_strength_derivatives = tp.generate_edge_strength_matrices(w, feature_matrix, adjacency_matrix)
     Q, dQ = tp.generate_transition_probability_matrices(edge_strengths, edge_strength_derivatives, alpha, start_node)
     p, dp = PageRank(Q, dQ)
@@ -136,10 +135,7 @@ def goal_function_derivative_single_node(w, *args):
     pd = args[4]
     loss_func = args[5]
     adjacency_matrix = args[6]
-    layer_transitions = args[7]
-    edge_strengths, edge_strength_derivatives = tp.generate_multiplex_edge_strength_matrices(w, feature_matrix,
-                                                                                             adjacency_matrix,
-                                                                                             layer_transitions)
+    edge_strengths, edge_strength_derivatives = tp.generate_edge_strength_matrices(w, feature_matrix, adjacency_matrix)
     Q, dQ = tp.generate_transition_probability_matrices(edge_strengths, edge_strength_derivatives, alpha, start_node)
     p, dp = PageRank(Q, dQ)
     sum = np.zeros((len(w)))
