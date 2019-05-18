@@ -51,8 +51,7 @@ def generate_edge_strength_matrices(w, feature_vector_matrix, adjacency_matrix):
                                                dtype=np.float64)
     for i in range(feature_vector_matrix.shape[0]):
         for j in range(feature_vector_matrix.shape[1]):
-            edge_strength_matrix[i][j] = calculate_edge_strength(feature_vector_matrix[i][j], w) * adjacency_matrix[i][
-                j]
+            edge_strength_matrix[i][j] = calculate_edge_strength(feature_vector_matrix[i][j], w) * adjacency_matrix[i][j]
             edge_strength_derivative_matrix[i][j] = calculate_edge_strength_derivative(feature_vector_matrix[i][j], w) * \
                                                     adjacency_matrix[i][j]
     return edge_strength_matrix, edge_strength_derivative_matrix
