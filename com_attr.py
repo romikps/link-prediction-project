@@ -3,7 +3,7 @@ from import_data import hepph_graph
 import community
 from minimization_problem import goal_function_single_node, goal_function_derivative_single_node, PageRank
 from scipy.optimize import minimize
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import confusion_matrix, roc_curve, auc, precision_recall_curve
 import networkx as nx
 import transition_probabilities as tp
 import matplotlib.pyplot as plt
@@ -103,6 +103,22 @@ def plt_roc(true, pred):
     plt.show()
 
 plt_roc(true, p)
+
+pr_rec = precision_recall_curve(true, p)
+def plt_pr_rec(true, pred):
+    precision, recall, thresholds = precision_recall_curve(true, pred)
+    print('auc=%.3f' % auc(recall, precision))
+    # plot no skill
+    plt.plot([0, 1], [0.5, 0.5], linestyle='--')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    # plot the precision-recall curve for the model
+    plt.title("Precision-Recall curve")
+    plt.plot(recall, precision, marker='.')
+    # show the plot
+    plt.show()
+    
+plt_pr_rec(true, p)
 
 pred = np.array([1 if prob > 3.28932e-14 else 0 for prob in p])
 conf_matrix = confusion_matrix(true, pred)
