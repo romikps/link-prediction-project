@@ -8,14 +8,16 @@ import time
 # https://snap.stanford.edu/data/ca-HepPh.html
 hepph_data = pd.read_csv("CA-HepPh.txt", sep='\t', header=3)
 
-num_edges_used = 5000 #hepph_data.shape[0]
-tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))[:num_edges_used]
-unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
+num_edges_used = 3000 #hepph_data.shape[0]
+tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))
+edge_indices = np.random.choice(hepph_data.shape[0], size=num_edges_used, replace=False)
+
+#unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
 
 # Create graph.
 hepph_graph = nx.Graph()
-hepph_graph.add_nodes_from(unique_nodes)
-hepph_graph.add_edges_from(tuple_edge_list)
+#hepph_graph.add_nodes_from(unique_nodes)
+hepph_graph.add_edges_from(tuple_edge_list[edge_indices])
 
 # Draw graph.
 # --Separately--

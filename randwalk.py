@@ -76,3 +76,27 @@ for key in accumulated:
 
 rank_sorted = sorted(accumulated.items(), reverse=True, key=lambda elem: elem[1])
 # ranked_nodes = [(nodes[i], rank) for (i, rank) in rank_sorted]
+
+
+def convergence(p1, p2, epsilon=1e-12):
+    return np.amax(np.abs(p1 - p2)) <= epsilon
+
+def page_rank(Q):
+    """
+    Computes the stationary probabilities vector and its derivative
+    :param Q: transition probability matrix
+    :return: The vector of stationary distribution probabilities of Q
+    """
+    V = Q.shape[0]
+    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
+    t1 = 1
+    converged = False
+    while not converged:
+        p_new = np.empty([V])
+        for i in range(V):
+            p_new[i] = np.dot(p[t1 - 1], Q[:, i])
+        p = np.append(p, [p_new], axis=0)
+        converged = convergence(p_new, p[t1 - 1])
+        t1 = t1 + 1
+    return p[-1]
+

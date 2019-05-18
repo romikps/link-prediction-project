@@ -1,5 +1,5 @@
 from louvain_community_detection import best_partition, dendo
-from import_data import hepph_graph
+from import_data import hepph_graph, num_edges_used
 import community
 from minimization_problem import goal_function_single_node, goal_function_derivative_single_node, PageRank
 from scipy.optimize import minimize
@@ -9,6 +9,7 @@ import transition_probabilities as tp
 import matplotlib.pyplot as plt
 import pickle
 import time
+import numpy as np
     
 for level in range(len(dendo)):
     level_partition = community.partition_at_level(dendo, level)
@@ -49,7 +50,7 @@ for from_node, to_node, features in hepph_graph.edges.data():
     feature_matrix[i, j] = np.array(list(features.values()))
     
 alpha = 0.05
-s = node_to_index[17010]
+s = np.random.randint(nodes_n)
 loss_func = "wmw"
 
 index_to_node = [n for n in hepph_graph.nodes]
@@ -74,7 +75,12 @@ opt_res = minimize(goal_function_single_node, w_init,
                    options={'disp': True})
 
 opt_w = opt_res.x
-pickle.dump(opt_w, open(f"w_{int(time.time())}.p", "wb"))
+pickle.dump({'w': opt_w,
+             'nodes': nodes_n,
+             'edges': num_edges_used,
+             'd': len(d_nodes),
+             'l': len(l_nodes)
+        }, open(f"w_{int(time.time())}.p", "wb"))
 # opt_w = pickle.load(open( "save.p", "rb" ))
 
 edge_strengths, edge_strength_derivatives = tp.generate_edge_strength_matrices(opt_w, feature_matrix, adjacency_matrix)
@@ -87,22 +93,22 @@ p_sorted = sorted([(i, prob) for i, prob in enumerate(p)], reverse=True, key=lam
 true = np.zeros(nodes_n)
 true[d_nodes] = 1
 
-roc = roc_curve(true, p, pos_label=1)
-    
-def plt_roc(true, pred):
-    fpr, tpr, thresholds = roc_curve(true, pred, pos_label=1)
-    plt.figure()
-    plt.plot(fpr, tpr, color='darkorange', label='ROC curve (area = %0.2f)' % auc(fpr, tpr))
-    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic')
-    plt.legend(loc="lower right")
-    plt.show()
-
-plt_roc(true, p)
+#roc = roc_curve(true, p, pos_label=1)
+#    
+#def plt_roc(true, pred):
+#    fpr, tpr, thresholds = roc_curve(true, pred, pos_label=1)
+#    plt.figure()
+#    plt.plot(fpr, tpr, color='darkorange', label='ROC curve (area = %0.2f)' % auc(fpr, tpr))
+#    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+#    plt.xlim([0.0, 1.0])
+#    plt.ylim([0.0, 1.05])
+#    plt.xlabel('False Positive Rate')
+#    plt.ylabel('True Positive Rate')
+#    plt.title('Receiver operating characteristic')
+#    plt.legend(loc="lower right")
+#    plt.show()
+#
+#plt_roc(true, p)
 
 pr_rec = precision_recall_curve(true, p)
 def plt_pr_rec(true, pred):
