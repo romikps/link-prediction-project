@@ -71,7 +71,8 @@ for i in range(30):
 
     #p_sorted = sorted([(i, prob) for i, prob in enumerate(p)], reverse=True, key=lambda elem: elem[1])
     stats.append({'s': s, 'd': d_nodes, 'p': p})
-    pickle.dump(stats, open(f"stats_{int(time.time())}.p", "wb"))
+    
+pickle.dump(stats, open(f"stats_{int(time.time())}.p", "wb"))
 
 
 conf_sum = np.zeros((2, 2))
