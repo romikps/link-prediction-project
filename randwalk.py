@@ -77,8 +77,10 @@ def get_probs(arr):
 # ranked_nodes = [(nodes[i], rank) for (i, rank) in rank_sorted]
 
 
-def convergence(p1, p2, epsilon=1e-12):
-    return np.amax(np.abs(p1 - p2)) <= epsilon
+def convergence(p1, p2, epsilon=1e-5):
+    diff = np.amax(np.abs(p1 - p2))
+    print("p diff =", diff)
+    return diff <= epsilon
 
 
 def page_rank(Q):
