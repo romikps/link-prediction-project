@@ -65,6 +65,7 @@ def plt_pr_rec(pr_rec):
     
 plt_pr_rec(pr_rec)
 
-pred = np.array([1 if prob > 3.28932e-14 else 0 for prob in p])
+pred = np.array([1 if prob > 0 else 0 for prob in p])
 conf_matrix = metrics.confusion_matrix(true, pred)
 
+acc = metrics.accuracy_score(true, pred)

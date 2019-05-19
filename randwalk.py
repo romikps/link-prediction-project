@@ -2,7 +2,6 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
-from import_data import train_edges, test_edges, unique_nodes as nodes
 
 def draw_graph(G):
     nx.draw(G, with_labels=True)
@@ -32,7 +31,7 @@ G = nx.gnp_random_graph(n_nodes, 0.2)
 #G = nx.Graph()
 #G.add_nodes_from(nodes)
 #G.add_edges_from(train_edges)
-draw_graph(G)
+#draw_graph(G)
 
 A = nx.adj_matrix(G)
 A = A.todense()

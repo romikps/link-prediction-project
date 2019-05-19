@@ -25,10 +25,10 @@ contains the smallest communities, and the best is len(dendrogram) - 1.
 best_part_com = list(set(best_partition.values()))
 #print('Best partition communities: ', best_part_com)
 
-level = 0
-level_partition = community.partition_at_level(dendo, level)
-level_part_com = list(set(level_partition.values()))
-print(len(level_part_com), 'communities at level', level)
+#level = 0
+#level_partition = community.partition_at_level(dendo, level)
+#level_part_com = list(set(level_partition.values()))
+#print(len(level_part_com), 'communities at level', level)
 
 #part = dict_levels # dictionary of nodes and belonging
 #for node in G.nodes():
