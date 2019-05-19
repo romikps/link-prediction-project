@@ -77,7 +77,7 @@ def get_probs(arr):
 # ranked_nodes = [(nodes[i], rank) for (i, rank) in rank_sorted]
 
 
-def convergence(p1, p2, epsilon=1e-5):
+def convergence(p1, p2, epsilon=1e-3):
     diff = np.amax(np.abs(p1 - p2))
     print("p diff =", diff)
     return diff <= epsilon
@@ -88,19 +88,27 @@ def page_rank(Q):
     Computes the stationary probabilities vector and its derivative
     :param Q: transition probability matrix
     :return: The vector of stationary distribution probabilities of Q
+    Could be more memory efficient!!!
     """
     V = Q.shape[0]
-    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
-    t1 = 1
+#    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
+#    t1 = 1
+#    converged = False
+#    while not converged:
+#        p_new = np.empty([V])
+#        for i in range(V):
+#            p_new[i] = np.dot(p[t1 - 1], Q[:, i])
+#        p = np.append(p, [p_new], axis=0)
+#        converged = convergence(p_new, p[t1 - 1])
+#        t1 = t1 + 1
+#    return p[-1]
+    p = np.repeat(1 / V, V).reshape(1, -1)
     converged = False
     while not converged:
-        p_new = np.empty([V])
-        for i in range(V):
-            p_new[i] = np.dot(p[t1 - 1], Q[:, i])
-        p = np.append(p, [p_new], axis=0)
-        converged = convergence(p_new, p[t1 - 1])
-        t1 = t1 + 1
-    return p[-1]
+        p_new = np.dot(p, Q)
+        converged = convergence(p_new, p)
+        p = p_new
+    return p_new.reshape(-1)
 
 
 def generate_transition_probability_matrix(edge_strength_matrix, alpha, start_node):
@@ -131,7 +139,7 @@ def calculate_edge_strength(feature_vector, w):
     :param w: vector of feature weights
     :return: The edge strength of a given edge with respect to its feature vector.
     """
-    # return math.exp(np.dot(feature_vector, w))
+    #return np.exp(np.dot(feature_vector, w))
     return np.dot(feature_vector, w) + 1
 
 
