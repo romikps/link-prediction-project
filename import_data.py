@@ -9,15 +9,21 @@ import time
 hepph_data = pd.read_csv("CA-HepPh.txt", sep='\t', header=3)
 
 num_edges_used = hepph_data.shape[0]
+test_part = 0.3
+
 tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))
-edge_indices = np.random.choice(hepph_data.shape[0], size=num_edges_used, replace=False)
+
+n_test_edges = int(num_edges_used * test_part)
+test_indices = np.random.choice(num_edges_used, n_test_edges, replace=False)
+train_indices = np.setdiff1d(np.arange(num_edges_used), test_indices)
 
 #unique_nodes = np.unique([node for edge in tuple_edge_list for node in edge])
+test_edges =  tuple_edge_list[test_indices]
 
 # Create graph.
 hepph_graph = nx.Graph()
 #hepph_graph.add_nodes_from(unique_nodes)
-hepph_graph.add_edges_from(tuple_edge_list[edge_indices])
+hepph_graph.add_edges_from(tuple_edge_list[train_indices])
 
 # Draw graph.
 # --Separately--
