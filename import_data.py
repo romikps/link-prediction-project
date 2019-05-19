@@ -8,7 +8,7 @@ import time
 # https://snap.stanford.edu/data/ca-HepPh.html
 hepph_data = pd.read_csv("CA-HepPh.txt", sep='\t', header=3)
 
-num_edges_used = 3000 #hepph_data.shape[0]
+num_edges_used = hepph_data.shape[0]
 tuple_edge_list = np.array(list(hepph_data.itertuples(index=False, name=None)))
 edge_indices = np.random.choice(hepph_data.shape[0], size=num_edges_used, replace=False)
 

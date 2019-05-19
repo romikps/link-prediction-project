@@ -26,54 +26,54 @@ def get_probs(arr):
         normalized[restart_node] = 1
     return normalized
 
-n_nodes = 5        
-G = nx.gnp_random_graph(n_nodes, 0.2)
+#n_nodes = 5        
+#G = nx.gnp_random_graph(n_nodes, 0.2)
 #G = nx.Graph()
 #G.add_nodes_from(nodes)
 #G.add_edges_from(train_edges)
 #draw_graph(G)
 
-A = nx.adj_matrix(G)
-A = A.todense()
-A = np.array(A, dtype = np.float64)
+#A = nx.adj_matrix(G)
+#A = A.todense()
+#A = np.array(A, dtype = np.float64)
 
 # the degree matrix D
 # D = np.diag(np.sum(A, axis=0))
 # the transition matrix T
 # T = np.dot(np.linalg.inv(D), A)
-T = get_transition_mat(A)
+#T = get_transition_mat(A)
 
 # Markovian random walk 
 # the graph can be considered as a finite-state Markov chain
-walkLength = 10
+#walkLength = 10
 # the state vector - the i-th component indicates the probability of being at node i
 # define the starting node
-p = np.zeros(n_nodes)
-p[0] = 1
-p = p.reshape(-1,1)
-visited = list()
-for k in range(walkLength):
+#p = np.zeros(n_nodes)
+#p[0] = 1
+#p = p.reshape(-1,1)
+#visited = list()
+#for k in range(walkLength):
     # evaluate the next state vector
-    p = np.dot(T, p)
+#    p = np.dot(T, p)
     # choose the node with the highest probability as the next visited node
     # visited.append(np.argmax(p))
-    try:
-        next_node = np.random.choice(n_nodes, p=get_probs(p))
-    except ValueError as err:
-        print(err)
-        print("p =", get_probs(p))
-        
-    visited.append(next_node)
-   
-accumulated = {}
-for val in visited:
-    accumulated[val] = accumulated[val] + 1 if val in accumulated else 1
+#    try:
+#        next_node = np.random.choice(n_nodes, p=get_probs(p))
+#    except ValueError as err:
+#        print(err)
+#        print("p =", get_probs(p))
+#        
+#    visited.append(next_node)
+#   
+#accumulated = {}
+#for val in visited:
+#    accumulated[val] = accumulated[val] + 1 if val in accumulated else 1
 
 # normalize
-for key in accumulated:
-    accumulated[key] /= walkLength
-
-rank_sorted = sorted(accumulated.items(), reverse=True, key=lambda elem: elem[1])
+#for key in accumulated:
+#    accumulated[key] /= walkLength
+#
+#rank_sorted = sorted(accumulated.items(), reverse=True, key=lambda elem: elem[1])
 # ranked_nodes = [(nodes[i], rank) for (i, rank) in rank_sorted]
 
 
@@ -144,6 +144,7 @@ def generate_edge_strength_matrix(w, feature_vector_matrix, adjacency_matrix):
     edge_strength_matrix = np.empty([feature_vector_matrix.shape[0], feature_vector_matrix.shape[1]], dtype=np.float64)
     for i in range(feature_vector_matrix.shape[0]):
         for j in range(feature_vector_matrix.shape[1]):
-            edge_strength_matrix[i][j] = calculate_edge_strength(feature_vector_matrix[i][j], w) * adjacency_matrix[i][j]
+            if adjacency_matrix[i][j] > 0:
+                edge_strength_matrix[i][j] = calculate_edge_strength(feature_vector_matrix[i][j], w) * adjacency_matrix[i][j]
             
     return edge_strength_matrix

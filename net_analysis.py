@@ -35,6 +35,7 @@ for from_node, to_node, features in hepph_graph.edges.data():
     j = node_to_index[to_node]
     adjacency_matrix[i, j] = 1
     feature_matrix[i, j] = np.array(list(features.values()))
+print("Adjacency and feature matrices ready!")
     
 alpha = 0.05
 s = np.random.randint(nodes_n)
@@ -44,8 +45,13 @@ d_nodes = np.array([node_to_index[node] for node in hepph_graph[index_to_node[s]
 l_nodes = np.setdiff1d(all_nodes, d_nodes)
 
 edge_strengths = randwalk.generate_edge_strength_matrix(w, feature_matrix, adjacency_matrix)
+print("Edge strength matrix ready!")
+
+
 Q = randwalk.generate_transition_probability_matrix(edge_strengths, alpha, s)
+print("Transition probability matrix ready!")
 p = randwalk.page_rank(Q)  
+print("Random walk converged!")
 
 p_sorted = sorted([(i, prob) for i, prob in enumerate(p)], reverse=True, key=lambda elem: elem[1])
 
