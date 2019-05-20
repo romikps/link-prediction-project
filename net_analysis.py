@@ -54,7 +54,7 @@ for from_node, to_node, features in hepph_graph.edges.data():
     feature_matrix[i, j] = np.array(list(features.values()))
 print("Adjacency and feature matrices ready!")
     
-alpha = 0.5
+alpha = 0.1
 w = np.ones(feature_num)
 all_nodes = np.arange(nodes_n)
 
@@ -65,8 +65,9 @@ print("Edge strength matrix ready!")
 #pickle.dump(edge_strengths, open(f"edgstr_{int(time.time())}.p", "wb"))
 # opt_w = pickle.load(open("save.p", "rb"))
 stats = []
-for i in range(5):
-    s = np.random.choice(used_nodes)
+ss = np.random.choice(used_nodes, 10, replace=False)
+for s in ss:
+    #s = np.random.choice(used_nodes)
     print("Chosen node", s)
     #d_nodes = np.array([node_to_index[node] for node in hepph_graph[index_to_node[s]].keys()])
     # take 10 times more non-links
@@ -74,9 +75,9 @@ for i in range(5):
     Q = randwalk.generate_transition_probability_matrix(edge_strengths, alpha, node_to_index[s])
     print("Transition probability matrix ready!")
     
-    #p_init = np.zeros(nodes_n)
-    #p_init[node_to_index[s]] = 1
-    p = randwalk.page_rank(Q)  
+    p_init = np.zeros(nodes_n)
+    p_init[node_to_index[s]] = 1
+    p = randwalk.page_rank(Q, p_init)  
     print(f"Random walk converged for node #{i}: {s}!")
 
     #p_sorted = sorted([(i, prob) for i, prob in enumerate(p)], reverse=True, key=lambda elem: elem[1])
@@ -94,8 +95,10 @@ for i, stat in enumerate(stats):
     
     pr_rec = metrics.precision_recall_curve(true, stat['p'])    
     #plt_pr_rec(pr_rec, title=f"Precision-Recall for node #{i}")
-    plot_prvsrec(pr_rec)
+    #plot_prvsrec(pr_rec)
     cutoff_i = np.argwhere(np.diff(np.sign(pr_rec[0] - pr_rec[1]))).flatten()[0]
+    #cutoff_i = int(pr_rec[2].shape[0]/2)
+    #cutoff_i = int(pr_rec[2].shape[0] * 0.1)
     print("cut-off index:", cutoff_i)
     #pr_rec[2][cutoff_i-1]
     pred = np.array([1 if prob >= pr_rec[2][cutoff_i] else 0 for prob in p])

@@ -83,7 +83,7 @@ def convergence(p1, p2, epsilon=1e-10):
     return diff <= epsilon
 
 
-def page_rank(Q):
+def page_rank(Q, p):
     """
     Computes the stationary probabilities vector and its derivative
     :param Q: transition probability matrix
@@ -91,7 +91,7 @@ def page_rank(Q):
     Could be more memory efficient!!!
     """
     V = Q.shape[0]
-    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
+    #p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
 #    t1 = 1
 #    converged = False
 #    while not converged:
