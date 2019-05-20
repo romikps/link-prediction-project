@@ -77,7 +77,7 @@ def get_probs(arr):
 # ranked_nodes = [(nodes[i], rank) for (i, rank) in rank_sorted]
 
 
-def convergence(p1, p2, epsilon=1e-3):
+def convergence(p1, p2, epsilon=1e-10):
     diff = np.amax(np.abs(p1 - p2))
     print("p diff =", diff)
     return diff <= epsilon
@@ -91,7 +91,7 @@ def page_rank(Q):
     Could be more memory efficient!!!
     """
     V = Q.shape[0]
-#    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
+    p = np.array([np.repeat(1 / V, V)], dtype=np.float64)
 #    t1 = 1
 #    converged = False
 #    while not converged:
@@ -102,7 +102,8 @@ def page_rank(Q):
 #        converged = convergence(p_new, p[t1 - 1])
 #        t1 = t1 + 1
 #    return p[-1]
-    p = np.repeat(1 / V, V).reshape(1, -1)
+    #p = np.repeat(1 / V, V).reshape(1, -1)
+    p = p.reshape(1, -1)
     converged = False
     while not converged:
         p_new = np.dot(p, Q)

@@ -19,8 +19,8 @@ def plt_pr_rec(pr_rec, title="Precision-Recall curve"):
     plt.show()
  
 def plot_prvsrec(pr_rec):
-    plt.plot(pr_rec[2], pr_rec[0][:-1], label="Precision")
-    plt.plot(pr_rec[2], pr_rec[1][:-1], label="Recall")
+    plt.plot(np.arange(pr_rec[0].shape[0]), pr_rec[0], label="Precision")
+    plt.plot(np.arange(pr_rec[1].shape[0]), pr_rec[1], label="Recall")
     plt.legend()
     plt.show()
     
@@ -65,7 +65,7 @@ print("Edge strength matrix ready!")
 #pickle.dump(edge_strengths, open(f"edgstr_{int(time.time())}.p", "wb"))
 # opt_w = pickle.load(open("save.p", "rb"))
 stats = []
-for i in range(10):
+for i in range(5):
     s = np.random.choice(used_nodes)
     print("Chosen node", s)
     #d_nodes = np.array([node_to_index[node] for node in hepph_graph[index_to_node[s]].keys()])
@@ -74,8 +74,10 @@ for i in range(10):
     Q = randwalk.generate_transition_probability_matrix(edge_strengths, alpha, node_to_index[s])
     print("Transition probability matrix ready!")
     
+    #p_init = np.zeros(nodes_n)
+    #p_init[node_to_index[s]] = 1
     p = randwalk.page_rank(Q)  
-    print(f"Random walk converged for node #{i}!")
+    print(f"Random walk converged for node #{i}: {s}!")
 
     #p_sorted = sorted([(i, prob) for i, prob in enumerate(p)], reverse=True, key=lambda elem: elem[1])
     stats.append({'s': s, 'p': p})
@@ -91,14 +93,15 @@ for i, stat in enumerate(stats):
     true[d] = 1
     
     pr_rec = metrics.precision_recall_curve(true, stat['p'])    
-    plt_pr_rec(pr_rec, title=f"Precision-Recall for node #{i}")
-    #plot_prvsrec(pr_rec)
-    #cutoff_i = np.argwhere(np.diff(np.sign(pr_rec[0] - pr_rec[1]))).flatten()[0]
+    #plt_pr_rec(pr_rec, title=f"Precision-Recall for node #{i}")
+    plot_prvsrec(pr_rec)
+    cutoff_i = np.argwhere(np.diff(np.sign(pr_rec[0] - pr_rec[1]))).flatten()[0]
+    print("cut-off index:", cutoff_i)
     #pr_rec[2][cutoff_i-1]
-    #pred = np.array([1 if prob > 1e-5 else 0 for prob in p])
-    highest = np.argsort(stat['p'])[:20]
-    pred = np.zeros(nodes_n)
-    pred[highest] = 1
+    pred = np.array([1 if prob >= pr_rec[2][cutoff_i] else 0 for prob in p])
+#    highest = np.argsort(stat['p'])[:len(d)]
+#    pred = np.zeros(nodes_n)
+#    pred[highest] = 1
     conf_matrix = metrics.confusion_matrix(true, pred)  
     print(conf_matrix)
     conf_sum += conf_matrix
